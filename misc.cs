@@ -61,5 +61,22 @@ namespace steganography
             Color c = Color.FromArgb(red, green, blue);
             return c;
         }
+
+        /// <summary>
+        /// Extract Message Size from a bitmap
+        /// </summary>
+        /// <param name="bmImage"></param>
+        /// <returns></returns>
+        public static ulong GetMessageLength(Bitmap bmImage)
+        {
+            List<Color> colors = new List<Color>()
+            {
+                bmImage.GetPixel(0, 0),
+                bmImage.GetPixel(0, 1),
+                bmImage.GetPixel(0, 2)
+            };
+            ulong messageSize = misc.ColorBytesToULong(colors);
+            return messageSize;
+        }
     }
 }

@@ -11,10 +11,15 @@ namespace steganography
 {
     public class CoreTxtImageEx
     {
-        public static void HideMessage(string strImagePath, string txtEncMessage)
+        /// <summary>
+        /// Hide text message into a Bitmap
+        /// </summary>
+        /// <param name="strImagePath">Image File Path</param>
+        /// <param name="txtMessage">Message to hide</param>
+        public static void HideMessage(string strImagePath, string txtMessage)
         {
             Bitmap bmImage = new Bitmap(strImagePath);
-            ulong MessageLen = (ulong)txtEncMessage.Length;
+            ulong MessageLen = (ulong)txtMessage.Length;
             ulong iTotal = (ulong)(bmImage.Width * bmImage.Height);
             bool doable = MessageLen + 3 <= iTotal;
             ulong iLetterIndex = 0;
@@ -51,18 +56,12 @@ namespace steganography
                     }
                     else
                     {
-                        Color nPix = Color.FromArgb(pix.A, pix.R, pix.G, Convert.ToInt32(txtEncMessage[(int)iLetterIndex]));
+                        Color nPix = Color.FromArgb(pix.A, pix.R, pix.G, Convert.ToInt32(txtMessage[(int)iLetterIndex]));
                         bmImage.SetPixel(iWidth, iHeight, nPix);
                         iLetterIndex++;
                     }
                 }
             }
-
-            SaveModifiedImage(ref bmImage, strImagePath);
-        }
-
-        private static void SaveModifiedImage(ref Bitmap bmImage, string strImagePath)
-        {
 
             FileInfo file_info = new FileInfo(strImagePath);
             string strExtensionLowerCase = file_info.Extension.ToLower();
@@ -90,25 +89,20 @@ namespace steganography
             bmImage.Dispose();
         }
 
-        private static ulong GetMessageLength(Bitmap bmImage)
-        {
-            List<Color> colors = new List<Color>();
-            colors.Add(bmImage.GetPixel(0, 0));
-            colors.Add(bmImage.GetPixel(0, 1));
-            colors.Add(bmImage.GetPixel(0, 2));
-            ulong messageSize = misc.ColorBytesToULong(colors);
-            return messageSize;
-        }
-        public static void DiscloseMessage(string strImagePath)
+        /// <summary>
+        /// Extract Message from an Image 
+        /// </summary>
+        /// <param name="strImagePath">Image file path</param>
+        private static StringBuilder CoreExtractMessageToFile(string strImagePath)
         {
             Bitmap bmImage = new Bitmap(strImagePath);
-            ulong iMessageLen = GetMessageLength(bmImage);
+            ulong iMessageLen = misc.GetMessageLength(bmImage);
             StringBuilder strBldAllText = new StringBuilder();
             ulong iLetterIndex = 0;
             bool bFinished = false;
-            int iWidth = 0,iHeight = 3;
+            int iWidth = 0, iHeight = 3;
 
-            for ( ; iWidth < bmImage.Width && !bFinished; iWidth++)
+            for (; iWidth < bmImage.Width && !bFinished; iWidth++)
             {
                 for (; iHeight < bmImage.Height; iHeight++)
                 {
@@ -128,11 +122,33 @@ namespace steganography
                 }
             }
 
-            StreamWriter sw = new StreamWriter("Dec.txt", true);
+            return strBldAllText;
+        }
+
+        /// <summary>
+        /// Extract Message from an Image to String
+        /// </summary>
+        /// <param name="strImagePath">Image file path</param>
+        public static void ExtractMessageToFile(string strImagePath)
+        {
+            StringBuilder strBldAllText = new StringBuilder();
+            strBldAllText = CoreExtractMessageToFile(strImagePath);
+
+            StreamWriter sw = new StreamWriter("message.txt", true);
             sw.Write(strBldAllText.ToString());
             sw.Close();
+        }
 
+        /// <summary>
+        /// Extract Message from an Image to File message.txt
+        /// </summary>
+        /// <param name="strImagePath">Image file path</param>
+        public static string ExtractMessage(string strImagePath)
+        {
+            StringBuilder strBldAllText = new StringBuilder();
+            strBldAllText = CoreExtractMessageToFile(strImagePath);
 
+            return strBldAllText.ToString();
         }
     }
 }

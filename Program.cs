@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Drawing;
 using steganography;
 
 namespace CLIVer
@@ -13,8 +7,14 @@ namespace CLIVer
     {
         static void Main(string[] args)
         {
-            CoreTxtImageEx.HideMessage("01.bmp", "Mohamed Saleh");
-            CoreTxtImageEx.DiscloseMessage("Enc.bmp");
+            string strMessage = "Mohamed Saleh";
+
+            CoreTxtImageEx.HideMessage("01.bmp", strMessage);
+            CoreTxtImageEx.ExtractMessageToFile("Enc.bmp");
+
+            string hiddenMessage = CoreTxtImageEx.ExtractMessage("Enc.bmp");
+            Console.WriteLine("Hidden Message -> " + hiddenMessage);
+
         }
 
     }
