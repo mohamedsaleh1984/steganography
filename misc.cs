@@ -11,7 +11,7 @@ namespace steganography
     public class misc
     {
         /// <summary>
-        /// Convert 
+        /// Convert ulong to List of Color
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
@@ -27,7 +27,11 @@ namespace steganography
 
             return colors;
         }
-
+        /// <summary>
+        /// Convert Colors to uLong
+        /// </summary>
+        /// <param name="colors"></param>
+        /// <returns></returns>
         public static ulong ColorBytesToULong(List<Color> colors)
         {
 
@@ -42,6 +46,13 @@ namespace steganography
             return stored_value;
         }
 
+        /// <summary>
+        /// Bytes to Color
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         private static Color BytesToColor(byte r, byte g, byte b)
         {
             int red = Convert.ToInt32(r);
